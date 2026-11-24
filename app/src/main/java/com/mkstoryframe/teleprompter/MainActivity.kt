@@ -295,7 +295,8 @@ class MainActivity : Activity() {
             val layout = display.layout
             if (layout != null) {
                 val line = layout.getLineForOffset(charPosition.coerceIn(0, display.text.length))
-                scroll.smoothScrollTo(0, layout.getLineTop(line).coerceAtLeast(0))
+                scroll.smoothScrollTo(0, (layout.getLineTop(line) - scroll.height / 2).coerceAtLeast(0))
+
             }
             status.text = "Skaitoma: ${lastPosition + 1}/${words.size} žodžių"
         }
@@ -315,7 +316,8 @@ class MainActivity : Activity() {
 
         display.post {
             val layout = display.layout ?: return@post
-            scroll.smoothScrollTo(0, layout.getLineTop(layout.getLineForOffset(offset.coerceIn(0, display.text.length))))
+            scroll.smoothScrollTo(0, (layout.getLineTop(layout.getLineForOffset(offset.coerceIn(0, display.text.length))) - scroll.height / 2).coerceAtLeast(0))
+
         }
     }
 
