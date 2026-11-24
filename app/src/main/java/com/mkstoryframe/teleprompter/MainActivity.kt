@@ -149,6 +149,18 @@ class MainActivity : Activity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { display.text = s; lastPosition = 0 }
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
+                var isFull = false
+        display.setOnClickListener {
+            isFull = !isFull
+            val vis = if (isFull) View.GONE else View.VISIBLE
+            heading.visibility = vis
+            controls.visibility = vis
+            script.visibility = vis
+            row.visibility = vis
+            mirrorRow.visibility = vis
+            status.visibility = vis
+        }
+
         setContentView(root)
     }
 
