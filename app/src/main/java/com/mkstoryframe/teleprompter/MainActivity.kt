@@ -41,10 +41,13 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
     private fun buildUi() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(18, 16, 18, 16)
+            fitsSystemWindows = true
+            setPadding(dp(14), dp(12), dp(14), dp(12))
             setBackgroundColor(Color.rgb(12, 14, 18))
         }
         val heading = TextView(this).apply {
@@ -53,49 +56,76 @@ class MainActivity : Activity() {
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
         }
-        root.addView(heading, lp(-1, 48))
+        root.addView(heading, lp(-1, dp(40)))
 
-        val controls = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER }
-        val lang = Spinner(this)
+        val controls = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val lang = Spinner(this).apply {
+            setBackgroundColor(Color.rgb(40, 44, 52))
+        }
         val langs = listOf("Lietuvių" to "lt-LT", "Русский" to "ru-RU", "Polski" to "pl-PL", "English" to "en-US")
-        lang.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, langs.map { it.first })
+        val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, langs.map { it.first }) {
+            override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                return (super.getView(position, convertView, parent) as TextView).apply {
+                    setTextColor(Color.WHITE)
+                    textSize = 15f
+                    setPadding(dp(12), 0, dp(12), 0)
+                }
+            }
+            override fun getDropDownView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                return (super.getDropDownView(position, convertView, parent) as TextView).apply {
+                    setTextColor(Color.WHITE)
+                    setBackgroundColor(Color.rgb(30, 33, 40))
+                    textSize = 16f
+                    setPadding(dp(14), dp(12), dp(14), dp(12))
+                }
+            }
+        }
+        lang.adapter = adapter
         lang.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
             override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
                 language = langs[position].second
             }
         }
-        controls.addView(lang, LinearLayout.LayoutParams(0, 52, 1f))
-        controls.addView(button("Įkelti tekstą") { importText() }, LinearLayout.LayoutParams(0, 52, 1f))
-        root.addView(controls)
+        controls.addView(lang, LinearLayout.LayoutParams(0, dp(48), 1f).apply { rightMargin = dp(6) })
+        controls.addView(button("Įkelti tekstą") { importText() }, LinearLayout.LayoutParams(0, dp(48), 1f))
+        root.addView(controls, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(6) })
 
         script = EditText(this).apply {
             hint = "Įklijuokite arba įrašykite scenarijų čia…"
             setTextColor(Color.LTGRAY)
             setHintTextColor(Color.GRAY)
-            textSize = 16f
-            setPadding(12, 8, 12, 8)
+            textSize = 15f
+            setPadding(dp(12), dp(8), dp(12), dp(8))
             setBackgroundColor(Color.rgb(30, 33, 40))
-            minLines = 3
+            minLines = 2
+            maxLines = 4
             gravity = Gravity.TOP
         }
-        root.addView(script, LinearLayout.LayoutParams(-1, 0, 0.9f))
+        root.addView(script, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(6) })
 
         val row = LinearLayout(this).apply { gravity = Gravity.CENTER }
-        row.addView(button("Pradėti / sustabdyti balsą") { toggleListening() }, LinearLayout.LayoutParams(0, 54, 1f))
-        row.addView(button("Atgal") { moveTo(lastPosition - 1) }, LinearLayout.LayoutParams(0, 54, 0.45f))
-        row.addView(button("Toliau") { moveTo(lastPosition + 1) }, LinearLayout.LayoutParams(0, 54, 0.45f))
-        root.addView(row)
+        row.addView(button("Balsas Start/Stop") { toggleListening() }, LinearLayout.LayoutParams(0, dp(48), 1.3f))
+        row.addView(button("Atgal") { moveTo(lastPosition - 1) }, LinearLayout.LayoutParams(0, dp(48), 0.7f))
+        row.addView(button("Toliau") { moveTo(lastPosition + 1) }, LinearLayout.LayoutParams(0, dp(48), 0.7f))
+        root.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(4) })
 
-        val mirrorRow = LinearLayout(this).apply { gravity = Gravity.CENTER }
-        mirrorRow.addView(check("Veidrodis H") { mirrorX = it; applyMirror() }, LinearLayout.LayoutParams(0, 48, 1f))
-        mirrorRow.addView(check("Veidrodis V") { mirrorY = it; applyMirror() }, LinearLayout.LayoutParams(0, 48, 1f))
-        mirrorRow.addView(button("A−") { fontSize = (fontSize - 2).coerceAtLeast(16f); display.textSize = fontSize }, LinearLayout.LayoutParams(0, 48, 0.5f))
-        mirrorRow.addView(button("A+") { fontSize = (fontSize + 2).coerceAtMost(64f); display.textSize = fontSize }, LinearLayout.LayoutParams(0, 48, 0.5f))
-        root.addView(mirrorRow)
+        val mirrorRow = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
+        mirrorRow.addView(check("Veidr. H") { mirrorX = it; applyMirror() }, LinearLayout.LayoutParams(0, dp(44), 1f))
+        mirrorRow.addView(check("Veidr. V") { mirrorY = it; applyMirror() }, LinearLayout.LayoutParams(0, dp(44), 1f))
+        mirrorRow.addView(button("A−") { fontSize = (fontSize - 2).coerceAtLeast(16f); display.textSize = fontSize }, LinearLayout.LayoutParams(0, dp(44), 0.6f))
+        mirrorRow.addView(button("A+") { fontSize = (fontSize + 2).coerceAtMost(64f); display.textSize = fontSize }, LinearLayout.LayoutParams(0, dp(44), 0.6f))
+        root.addView(mirrorRow, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(4) })
 
-        status = TextView(this).apply { text = "Paruošta. Pasirinkite kalbą ir pradėkite skaityti."; setTextColor(Color.LTGRAY); textSize = 13f }
-        root.addView(status, lp(-1, 34))
+        status = TextView(this).apply {
+            text = "Paruošta. Pasirinkite kalbą ir pradėkite skaityti."
+            setTextColor(Color.LTGRAY)
+            textSize = 13f
+        }
+        root.addView(status, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(6) })
 
         scroll = ScrollView(this).apply {
             setBackgroundColor(Color.BLACK)
@@ -106,11 +136,11 @@ class MainActivity : Activity() {
             textSize = fontSize
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER_VERTICAL
-            setPadding(28, 30, 28, 30)
+            setPadding(dp(16), dp(20), dp(16), dp(20))
             setLineSpacing(12f, 1.0f)
         }
         scroll.addView(display, FrameLayout.LayoutParams(-1, -2))
-        root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 2.1f))
+        root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
         script.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { display.text = s; lastPosition = 0 }
