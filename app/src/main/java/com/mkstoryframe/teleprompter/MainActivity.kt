@@ -178,8 +178,8 @@ class MainActivity : Activity() {
         setOnCheckedChangeListener { _, checked -> changed(checked) }
     }
     private fun applyMirror() {
-        display.scaleX = if (mirrorX) -1f else 1f
-        display.scaleY = if (mirrorY) -1f else 1f
+        scroll.scaleX = if (mirrorX) -1f else 1f
+        scroll.scaleY = if (mirrorY) -1f else 1f
     }
 
     private fun importText() {
@@ -295,7 +295,9 @@ class MainActivity : Activity() {
             val layout = display.layout
             if (layout != null) {
                 val line = layout.getLineForOffset(charPosition.coerceIn(0, display.text.length))
-                scroll.smoothScrollTo(0, (layout.getLineTop(line) - scroll.height / 3).coerceAtLeast(0))
+                val targetY = if (mirrorY) (display.height - layout.getLineBottom(line) - scroll.height / 3) else (layout.getLineTop(line) - scroll.height / 3)
+scroll.smoothScrollTo(0, targetY.coerceAtLeast(0))
+
 
             }
             status.text = "Skaitoma: ${lastPosition + 1}/${words.size} žodžių"
@@ -316,7 +318,10 @@ class MainActivity : Activity() {
 
         display.post {
             val layout = display.layout ?: return@post
-            scroll.smoothScrollTo(0, (layout.getLineTop(layout.getLineForOffset(offset.coerceIn(0, display.text.length))) - scroll.height / 3).coerceAtLeast(0))
+            val line = layout.getLineForOffset(offset.coerceIn(0, display.text.length))
+val targetY = if (mirrorY) (display.height - layout.getLineBottom(line) - scroll.height / 3) else (layout.getLineTop(line) - scroll.height / 3)
+scroll.smoothScrollTo(0, targetY.coerceAtLeast(0))
+
 
         }
     }
