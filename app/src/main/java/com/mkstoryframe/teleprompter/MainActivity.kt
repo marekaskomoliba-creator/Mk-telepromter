@@ -109,7 +109,7 @@ class MainActivity : Activity() {
             setPadding(28, 30, 28, 30)
             setLineSpacing(12f, 1.0f)
         }
-        scroll.addView(display, ScrollView.LayoutParams(-1, -2))
+        scroll.addView(display, FrameLayout.LayoutParams(-1, -2))
         root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 2.1f))
         script.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
