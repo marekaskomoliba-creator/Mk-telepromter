@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -275,6 +278,8 @@ class MainActivity : Activity() {
         if (bestIndex >= 0 && bestScore >= minOf(2, said.size)) {
             lastPosition = (bestIndex + bestScore).coerceAtMost(words.size - 1)
             val charPosition = charOffsetForWord(script.text.toString(), lastPosition)
+            updateHighlight(charPosition)
+
             val layout = display.layout
             if (layout != null) {
                 val line = layout.getLineForOffset(charPosition.coerceIn(0, display.text.length))
@@ -294,6 +299,8 @@ class MainActivity : Activity() {
         if (words.isEmpty()) return
         lastPosition = delta.coerceIn(0, words.lastIndex)
         val offset = charOffsetForWord(script.text.toString(), lastPosition)
+        updateHighlight(offset)
+
         display.post {
             val layout = display.layout ?: return@post
             scroll.smoothScrollTo(0, layout.getLineTop(layout.getLineForOffset(offset.coerceIn(0, display.text.length))))
@@ -304,5 +311,19 @@ class MainActivity : Activity() {
         listening = false
         recognizer?.destroy()
         super.onDestroy()
+    }
+        private fun updateHighlight(charOffset: Int) {
+        val raw = script.text.toString()
+        val safeOffset = charOffset.coerceIn(0, raw.length)
+        val spannable = SpannableString(raw)
+        if (safeOffset > 0) {
+            spannable.setSpan(
+                ForegroundColorSpan(Color.rgb(100, 105, 115)),
+                0,
+                safeOffset,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        display.text = spannable
     }
 }
