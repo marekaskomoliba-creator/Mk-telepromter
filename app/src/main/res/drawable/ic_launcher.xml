@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://android.com"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-
-    <!-- Тёмный фон -->
-    <path
-        android:fillColor="#141821"
-        android:pathData="M0,0h108v108h-108z" />
-
-    <!-- Корпус видеокамеры -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M24,38 C24,34.7 26.7,32 30,32 L62,32 C65.3,32 68,34.7 68,38 L68,70 C68,73.3 65.3,76 62,76 L30,76 C26.7,76 24,73.3 24,70 Z" />
-
-    <!-- Объектив камеры -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M71,45 L86,36 C87.5,35.1 89,36.2 89,38 L89,70 C89,71.8 87.5,72.9 86,72 L71,63 Z" />
-
-    <!-- Красная точка записи (REC) -->
-    <path
-        android:fillColor="#FF3B30"
-        android:pathData="M34,42 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
-</vector>
+<adaptive-icon xmlns:android="http://android.com">
+    <background>
+        <shape android:shape="rectangle">
+            <solid android:color="#141821" />
+        </shape>
+    </background>
+    <foreground>
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <!-- Корпус видеокамеры -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M26,38 C26,35.8 27.8,34 30,34 L62,34 C64.2,34 66,35.8 66,38 L66,70 C66,72.2 64.2,74 62,74 L30,74 C27.8,74 26,72.2 26,70 Z" />
+            <!-- Объектив камеры -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M70,46 L84,37 C85.3,36.2 87,37.1 87,38.7 L87,69.3 C87,70.9 85.3,71.8 84,71 L70,62 Z" />
+            <!-- Красная точка записи (REC) -->
+            <path
+                android:fillColor="#FF3B30"
+                android:pathData="M35,43 m-4.5,0 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0" />
+        </vector>
+    </foreground>
+</adaptive-icon>
