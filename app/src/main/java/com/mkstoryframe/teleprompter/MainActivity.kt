@@ -144,6 +144,20 @@ class MainActivity : Activity() {
         }
         scroll.addView(display, FrameLayout.LayoutParams(-1, -2))
         root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+        scroll.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_UP || event.action == android.view.MotionEvent.ACTION_CANCEL) {
+                val layout = display.layout
+                val words = normalize(script.text.toString())
+                if (layout != null && words.isNotEmpty()) {
+                    val targetLine = layout.getLineForVertical((scroll.scrollY + scroll.height / 3).coerceIn(0, display.height))
+                    val charOffset = layout.getLineStart(targetLine)
+                    val prefix = script.text.toString().substring(0, charOffset.coerceAtMost(script.text.length))
+                    lastPosition = normalize(prefix).size.coerceIn(0, words.lastIndex)
+                }
+            }
+            false
+        }
+
         script.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { display.text = s; lastPosition = 0 }
@@ -295,9 +309,8 @@ class MainActivity : Activity() {
             val layout = display.layout
             if (layout != null) {
                 val line = layout.getLineForOffset(charPosition.coerceIn(0, display.text.length))
-                val targetY = if (mirrorY) (display.height - layout.getLineBottom(line) - scroll.height / 3) else (layout.getLineTop(line) - scroll.height / 3)
+                val targetY = layout.getLineTop(line) - scroll.height / 3
 scroll.smoothScrollTo(0, targetY.coerceAtLeast(0))
-
 
             }
             status.text = "Skaitoma: ${lastPosition + 1}/${words.size} žodžių"
@@ -319,9 +332,8 @@ scroll.smoothScrollTo(0, targetY.coerceAtLeast(0))
         display.post {
             val layout = display.layout ?: return@post
             val line = layout.getLineForOffset(offset.coerceIn(0, display.text.length))
-val targetY = if (mirrorY) (display.height - layout.getLineBottom(line) - scroll.height / 3) else (layout.getLineTop(line) - scroll.height / 3)
+val targetY = layout.getLineTop(line) - scroll.height / 3
 scroll.smoothScrollTo(0, targetY.coerceAtLeast(0))
-
 
         }
     }
